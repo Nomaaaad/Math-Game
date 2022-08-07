@@ -24,6 +24,7 @@ let difficulty = '';
 let questionAmount = 20;
 let equationsArray = [];
 let playerGuessArray = [];
+let bestScoreArray = [];
 
 // Game Page
 let firstNumber = 0;
@@ -37,10 +38,49 @@ let timePlayed = 0;
 let baseTime = 0;
 let penaltyTime = 0;
 let finalTime = 0;
-let finalTimeDisplay = '0.0s';
+let finalTimeDisplay = '0.0';
 
 // Scroll
 let valueY = 0;
+
+// Refresh Splash Page Best Scores
+function bestScoresToDOM() {
+  bestScores.forEach((bestScore, index) => {
+    const bestScoreEl = bestScore;
+    bestScoreEl.textContent = `${bestScoreArray[index].bestScore}`;
+  });
+}
+
+// Check Local storage for best scores, set bestScoreArray
+function getSavedBestScores() {
+  if (localStorage.getItem('bestScores')) {
+    bestScoreArray = JSON.parse(localStorage.bestScores);
+  } else {
+    bestScoreArray = [
+      { difficulty: 'easy', bestScore: finalTimeDisplay },
+      { difficulty: 'medium', bestScore: finalTimeDisplay },
+      { difficulty: 'hard', bestScore: finalTimeDisplay },
+      { difficulty: 'insane', bestScore: finalTimeDisplay },
+    ];
+    localStorage.setItem('bestScores', JSON.stringify(bestScoreArray));
+  }
+  bestScoresToDOM();
+}
+
+// Update Best Score Array
+function updateBestScore() {
+  bestScoreArray.forEach((score, index) => {
+    // Select correct Best score to update
+    if (difficulty == score.difficulty) {
+      const savedBestScore = parseInt(bestScoreArray[index].bestScore, 10);
+      if (savedBestScore === 0 || savedBestScore > finalTime) {
+        bestScoreArray[index].bestScore = finalTimeDisplay;
+      }
+    }
+  });
+  bestScoresToDOM();
+  localStorage.setItem('bestScores', JSON.stringify(bestScoreArray));
+}
 
 // Reset Game
 function playAgain() {
@@ -73,6 +113,7 @@ function scoresToDOM() {
   baseTimeEl.textContent = `Base Time: ${baseTime}s`;
   penaltyTimeEl.textContent = `Penalty: +${penaltyTime}s`;
   finalTimeEl.textContent = `${finalTimeDisplay}s`;
+  updateBestScore();
   // Scroll to Top, go to Score Page
   itemContainer.scrollTo({ top: 0, behavior: 'instant' });
   showScorePage();
@@ -80,9 +121,7 @@ function scoresToDOM() {
 
 // Stop timer, process results, go to Score Page
 function checkTime() {
-  console.log(timePlayed)
   if (playerGuessArray.length == questionAmount) {
-    console.log('player guess arr', playerGuessArray);
     clearInterval(timer);
     // Check for wrong guesses, add penalty time
     equationsArray.forEach((equation, i) => {
@@ -94,7 +133,6 @@ function checkTime() {
       }
     });
     finalTime = timePlayed + penaltyTime;
-    console.log('time', timePlayed, 'penalty', penaltyTime, 'final', finalTime);
     scoresToDOM();
   }
 }
@@ -162,10 +200,8 @@ function selectDifficulty(level) {
 function createEquations(level) {
   // Randomly choose how many correct equations there should be
   const correctEquations = getRandomInt(questionAmount);
-  console.log('correct equations:', correctEquations);
   // Set amount of wrong equations
   const wrongEquations = questionAmount - correctEquations;
-  console.log('wrong equations', wrongEquations);
   // Loop through, multiply random numbers, push to array
   for (let i = 0; i < correctEquations; i++) {
     selectDifficulty(level);
@@ -230,11 +266,14 @@ function populateGamePage() {
 function countdownStart() {
   let count = 3
   countdown.textContent = count;
-  setInterval(() => {
-    if (count > 1) {
-      count--
-      countdown.textContent = count;
-    } else countdown.textContent = 'GO!';
+  const timeCountDown = setInterval(() => {
+    count--;
+    if (count === 0) countdown.textContent = 'GO!';
+    else if (count === -1) {
+      showGamePage()
+      clearInterval(timeCountDown);
+    }
+    else countdown.textContent = count;
   }, 1000);
 }
 
@@ -245,7 +284,6 @@ function showCountdown() {
   splashPage.hidden = true;
   countdownStart();
   populateGamePage();
-  setTimeout(showGamePage, 400);
 }
 
 
@@ -264,7 +302,6 @@ function getRadioValue() {
 function getDifficultyValue(e) {
   e.preventDefault();
   difficulty = getRadioValue();
-  console.log('question difficulty:', difficulty)
   difficulty !== undefined ? showCountdown() : false;
 }
 
@@ -282,3 +319,5 @@ startForm.addEventListener('click', () => {
 // Event Listeners
 startForm.addEventListener('submit', getDifficultyValue);
 gamePage.addEventListener('click', startTimer);
+
+getSavedBestScores();
