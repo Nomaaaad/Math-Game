@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Sprint Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>Math Sprint Game</h1>
+        </div>
+
+        <!-- Splash Page -->
+        <div class="card" id="splash-page">
+            <form id="start-form">
+                <div class="selection-container">
+                    <!-- Easy Questions Radio Input -->
+                    <div class="radio-container">
+                        <label for="value-easy">Easy</label>
+                        <input type="radio" name="questions" value="easy" id="value-easy">
+                        <span class="best-score">
+                            <span>Best Score</span>
+                            <span class="best-score-value">0.0s</span>
+                        </span>
+                    </div>
+                    <!-- Medium Questions Radio Input -->
+                    <div class="radio-container">
+                        <label for="value-medium">Medium</label>
+                        <input type="radio" name="questions" value="medium" id="value-medium">
+                        <span class="best-score">
+                            <span>Best Score</span>
+                            <span class="best-score-value">0.0s</span>
+                        </span>
+                    </div>
+                    <!-- Hard Questions Radio Input -->
+                    <div class="radio-container">
+                        <label for="value-hard">Hard</label>
+                        <input type="radio" name="questions" value="hard" id="value-hard">
+                        <span class="best-score">
+                            <span>Best Score</span>
+                            <span class="best-score-value">0.0s</span>
+                        </span>
+                    </div>
+                    <!-- Insane Questions Radio Input -->
+                    <div class="radio-container">
+                        <label for="value-insane">Insane</label>
+                        <input type="radio" name="questions" value="insane" id="value-insane">
+                        <span class="best-score">
+                            <span>Best Score</span>
+                            <span class="best-score-value">0.0s</span>
+                        </span>
+                    </div>
+                </div>
+                <!-- Start Button -->
+                <div class="selection-footer">
+                    <button class="start" type="submit">Start Round</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Countdown Page -->
+        <div class="card" id="countdown-page" hidden>
+            <h1 class="countdown"></h1>
+        </div>
+
+        <!-- Game Page -->
+        <div class="card" id="game-page" hidden>
+            <!-- Item Container -->
+            <div class="item-container"></div>
+            <!-- Right/Wrong -->
+            <div class="item-footer">
+                <button class="wrong" onclick="select(false)">Wrong</button>
+                <button class="right" onclick="select(true)">Correct</button>
+            </div>
+        </div>
+
+        <!-- Score Page -->
+        <div class="card" id="score-page" hidden>
+            <!-- Score Container -->
+            <div class="score-container">
+                <h1 class="title">Your Time</h1>
+                <h1 class="final-time">3.5s</h1>
+                <h1 class="base-time">Base Time: 2.4s</h1>
+                <h1 class="penalty-time">Penalty: +1.0s</h1>
+            </div>
+            <!-- Play Again Btn -->
+            <div class="score-footer">
+                <button class="play-again">Play Again</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- Script -->
+    <script src="./shuffle.js"></script>
+    <script src="./script.js"></script>
+</body>
+
+</html>
